@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LiteratureAccessProfile",
+  "description": "Portable, per-user literature access preferences. Credentials and browser cookies are never stored here.",
+  "type": "object",
+  "required": ["version", "browser", "access", "output", "challenge", "fallback", "batch"],
+  "properties": {
+    "version": {"const": 2},
+    "browser": {
+      "type": "object",
+      "required": ["engine", "control_url"],
+      "properties": {
+        "engine": {"enum": ["chrome", "edge", "chromium"]},
+        "control_url": {"type": "string", "pattern": "^http://(127\\.0\\.0\\.1|localhost):[0-9]+$"},
+        "devtools_file": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "access": {
+      "type": "object",
+      "required": ["order", "institution", "discovery_url", "cnki_url"],
+      "properties": {
+        "order": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"enum": ["institution", "open_access"]},
+          "contains": {"const": "open_access"}
+        },
+        "institution": {
+          "type": ["object", "null"],
+          "required": ["name", "entry_url"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "entry_url": {"type": ["string", "null"], "pattern": "^https?://"},
+            "auth_hint": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "discovery_url": {"type": ["string", "null"], "pattern": "^https?://"},
+        "cnki_url": {"type": ["string", "null"], "pattern": "^https?://"}
+      },
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object", "required": ["directory"],
+      "properties": {"directory": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "challenge": {
+      "type": "object", "required": ["on_new"],
+      "properties": {"on_new": {"enum": ["wait_for_user", "skip_paper"]}},
+      "additionalProperties": false
+    },
+    "fallback": {
+      "type": "object",
+      "required": ["provider", "auto_request", "reward_points", "max_points_per_run"],
+      "properties": {
+        "provider": {"enum": ["none", "ablesci"]},
+        "auto_request": {"type": "boolean"},
+        "reward_points": {"type": ["integer", "null"], "minimum": 1},
+        "max_points_per_run": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "batch": {
+      "type": "object", "required": ["size"],
+      "properties": {"size": {"type": "integer", "minimum": 1, "maximum": 10}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

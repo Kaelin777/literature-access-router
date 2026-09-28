@@ -1,0 +1,16 @@
+{
+  "Elsevier": "https://www.sciencedirect.com/",
+  "Wiley": "https://onlinelibrary.wiley.com/",
+  "Springer": "https://link.springer.com/",
+  "ACS": "https://pubs.acs.org/",
+  "RSC": "https://pubs.rsc.org/",
+  "IEEE": "https://ieeexplore.ieee.org/",
+  "TaylorFrancis": "https://www.tandfonline.com/",
+  "Oxford": "https://academic.oup.com/",
+  "Cambridge": "https://www.cambridge.org/core",
+  "Sage": "https://journals.sagepub.com/",
+  "Nature": "https://www.nature.com/",
+  "Science": "https://www.science.org/",
+  "PNAS": "https://www.pnas.org/",
+  "AbleSci": "https://www.ablesci.com/"
+}

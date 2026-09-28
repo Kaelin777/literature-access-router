@@ -1,0 +1,19 @@
+name: literature-access-router
+version: 2.0.0
+description: >
+  Download academic papers through the user's configured authorized browser
+  and access routes, verify each PDF, and optionally use a configured fallback.
+always_load:
+  - SKILL.md
+references:
+  on_demand:
+    - condition: first-time profile setup or migration from a legacy school configuration
+      path: references/setup.md
+    - condition: browser CDP PDF capture
+      path: references/literature-download-chrome-cdp.md
+    - condition: active InstSci project requires publisher browser evidence
+      path: references/publisher-pdf-workflow.md
+    - condition: browser profile and login safety
+      path: references/chrome-profile-safety.md
+    - condition: optional AbleSci request, collection, or assist
+      path: references/ablesci-literature-request.md

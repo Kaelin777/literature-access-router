@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+profile.json
+school.json
+*.json.bak
+*.pdf
+*.log
+*.tmp
+node_modules/
+AbleSci_Assist/

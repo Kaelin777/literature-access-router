@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Access Router"
+  short_description: "Configure once, then fetch and verify academic PDFs"
+  default_prompt: "Use $literature-access-router to get this paper with my configured browser and authorized access routes. Verify the PDF and report any login or access blocker."
