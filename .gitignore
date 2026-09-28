@@ -12,3 +12,5 @@ school.json
 *.tmp
 node_modules/
 AbleSci_Assist/
+benchmark/.seed_body.md
+benchmark/outputs/

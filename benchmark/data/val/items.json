@@ -1,0 +1,32 @@
+[
+  {
+    "id": "val_http_403_only",
+    "task_type": "browser",
+    "scenario": {"request": "Assess institutional access", "profile": {"institution": "South Harbor Institute", "access_order": ["institution", "open_access"]}, "observation": "A non-browser HTTP probe returned 403, but the authenticated article tab has not been inspected"},
+    "expected": {"action": ["inspect_browser", "try_institution"], "status": "in_progress", "route": "institution"}
+  },
+  {
+    "id": "val_fallback_off",
+    "task_type": "fallback",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": "none"}, "observation": "Browser-confirmed institution denial; authorized open-access sources checked and absent; no PDF exists"},
+    "expected": {"action": "report_unavailable", "status": "unavailable", "route": ["none", "open_access"]}
+  },
+  {
+    "id": "val_fallback_budget",
+    "task_type": "fallback",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": {"provider": "ablesci", "auto_request": true, "reward_points": 10, "max_points_per_run": 20, "points_already_committed": 10, "logged_in": true}}, "observation": "Browser-confirmed institution denial and no legal OA copy; paper metadata is verified"},
+    "expected": {"action": "submit_fallback_request", "status": "requested", "route": "fallback"}
+  },
+  {
+    "id": "val_skip_challenge_to_oa",
+    "task_type": "authentication",
+    "scenario": {"request": "Continue DOI 10.1234/paper.d", "profile": {"challenge_on_new": "skip_paper", "access_order": ["institution", "open_access"]}, "observation": "The institutional tab requires 2FA, and the publisher offers a lawful open-access PDF for this paper"},
+    "expected": {"action": "try_open_access", "status": "in_progress", "route": "open_access"}
+  },
+  {
+    "id": "val_title_mismatch",
+    "task_type": "verification",
+    "scenario": {"request": "Report whether the requested paper is downloaded", "profile": {"access_order": ["open_access"]}, "observation": "Saved PDF has a correct header and six pages, but its first-page title and DOI both identify a different article"},
+    "expected": {"action": "mark_unverified", "status": "unverified"}
+  }
+]

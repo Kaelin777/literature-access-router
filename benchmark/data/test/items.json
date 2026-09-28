@@ -1,0 +1,50 @@
+[
+  {
+    "id": "test_budget_exhausted",
+    "task_type": "fallback",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": {"provider": "ablesci", "auto_request": true, "reward_points": 10, "max_points_per_run": 10, "points_already_committed": 10, "logged_in": true}}, "observation": "Institution route denied in the browser and OA sources are absent"},
+    "expected": {"action": "report_unavailable", "status": "unavailable", "route": ["none", "open_access", "fallback"]}
+  },
+  {
+    "id": "test_existing_verified",
+    "task_type": "verification",
+    "scenario": {"request": "Download DOI 10.1234/example.c", "profile": {"access_order": ["open_access"]}, "observation": "An existing local file has been rechecked: %PDF- header, 7 pages, and first-page DOI exactly matches the target"},
+    "expected": {"action": ["reuse_existing", "mark_downloaded"], "status": "downloaded", "route": ["none", "open_access"]}
+  },
+  {
+    "id": "test_batch_limit",
+    "task_type": "batching",
+    "scenario": {"request": "Download 11 identified papers", "profile": {"batch_size": 10, "access_order": ["open_access"]}, "observation": "No papers have been processed yet; all metadata is resolved"},
+    "expected": {"action": "split_batch", "status": "in_progress", "route": ["none", "open_access"]}
+  },
+  {
+    "id": "test_legacy_school_only",
+    "task_type": "setup",
+    "scenario": {"request": "Download one paper for a first-time user", "profile": "missing", "observation": "A legacy school.json exists with a preset name, but the user has not confirmed that institution, browser, or output directory"},
+    "expected": {"action": "configure_profile", "status": "needs_setup", "route": "none"}
+  },
+  {
+    "id": "test_pdf_header_only",
+    "task_type": "verification",
+    "scenario": {"request": "Report the download status", "profile": {"access_order": ["open_access"]}, "observation": "A local file begins %PDF-, but page count and title or DOI have not been checked"},
+    "expected": {"action": "verify_pdf", "status": "in_progress"}
+  },
+  {
+    "id": "test_new_2fa_after_setup",
+    "task_type": "authentication",
+    "scenario": {"request": "Continue the institutional article", "profile": {"challenge_on_new": "wait_for_user", "access_order": ["institution", "open_access"]}, "observation": "The user completed initial login last week; the article tab now has a fresh 2FA challenge"},
+    "expected": {"action": "wait_for_auth", "status": "needs_user", "route": "institution"}
+  },
+  {
+    "id": "test_explicit_unlimited_fallback",
+    "task_type": "fallback",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": {"provider": "ablesci", "auto_request": true, "reward_points": 8, "max_points_per_run": null, "unlimited_points_explicitly_opted_in": true, "logged_in": true}}, "observation": "Browser-confirmed institution denial, no legal OA copy, and verified paper metadata"},
+    "expected": {"action": "submit_fallback_request", "status": "requested", "route": "fallback"}
+  },
+  {
+    "id": "test_institution_denied_oa_available",
+    "task_type": "routing",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": "none"}, "observation": "Institutional denial was confirmed in the article tab, but a lawful author manuscript is available in a repository"},
+    "expected": {"action": "try_open_access", "status": "in_progress", "route": "open_access"}
+  }
+]

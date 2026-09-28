@@ -1,0 +1,56 @@
+[
+  {
+    "id": "train_missing_profile",
+    "task_type": "setup",
+    "scenario": {"request": "Download a DOI for a new user", "profile": "missing", "known": "No browser, output directory, or institution has been selected yet"},
+    "expected": {"action": "configure_profile", "status": "needs_setup", "route": "none"}
+  },
+  {
+    "id": "train_oa_only",
+    "task_type": "routing",
+    "scenario": {"request": "Download DOI 10.1234/example.a", "profile": {"access_order": ["open_access"], "institution": null}, "observation": "Publisher has a legal open-access PDF; no local PDF exists"},
+    "expected": {"action": "try_open_access", "status": "in_progress", "route": "open_access"}
+  },
+  {
+    "id": "train_other_institution",
+    "task_type": "routing",
+    "scenario": {"request": "Download DOI 10.1234/example.b", "profile": {"institution": "Riverbend University", "access_order": ["institution", "open_access"]}, "observation": "Existing authorized browser is ready; publisher article is identified; no route attempted yet"},
+    "expected": {"action": "try_institution", "status": "in_progress", "route": "institution"}
+  },
+  {
+    "id": "train_cdp_unavailable",
+    "task_type": "browser",
+    "scenario": {"request": "Download a paywalled article", "profile": {"browser": "chrome", "access_order": ["institution", "open_access"]}, "observation": "Chrome is running but remote debugging is unavailable; enabling or restarting it has not been authorized"},
+    "expected": {"action": "wait_for_browser", "status": "needs_user", "route": "none"}
+  },
+  {
+    "id": "train_sso_challenge",
+    "task_type": "authentication",
+    "scenario": {"request": "Continue the article download", "profile": {"challenge_on_new": "wait_for_user", "access_order": ["institution", "open_access"]}, "observation": "The activated article tab now displays institutional SSO with a 2FA challenge"},
+    "expected": {"action": "wait_for_auth", "status": "needs_user", "route": "institution"}
+  },
+  {
+    "id": "train_html_disguised",
+    "task_type": "verification",
+    "scenario": {"request": "Report whether the paper was downloaded", "profile": {"access_order": ["institution", "open_access"]}, "observation": "Saved file ends in .pdf but its first bytes are <html>; the viewer displayed a PDF icon"},
+    "expected": {"action": "mark_unverified", "status": "unverified"}
+  },
+  {
+    "id": "train_fallback_remaining_budget",
+    "task_type": "fallback",
+    "scenario": {"request": "Get the paper", "profile": {"access_order": ["institution", "open_access"], "fallback": {"provider": "ablesci", "auto_request": true, "reward_points": 10, "max_points_per_run": 30, "points_already_committed": 10, "logged_in": true}}, "observation": "Browser-confirmed institution denial, no legal open-access PDF, metadata verified, and no request for this paper exists"},
+    "expected": {"action": "submit_fallback_request", "status": "requested", "route": "fallback"}
+  },
+  {
+    "id": "train_skip_challenge_to_oa",
+    "task_type": "authentication",
+    "scenario": {"request": "Continue the article download", "profile": {"challenge_on_new": "skip_paper", "access_order": ["institution", "open_access"]}, "observation": "Institutional route shows a new CAPTCHA, while a legal repository copy for the same DOI is available"},
+    "expected": {"action": "try_open_access", "status": "in_progress", "route": "open_access"}
+  },
+  {
+    "id": "train_doi_mismatch",
+    "task_type": "verification",
+    "scenario": {"request": "Report the result for DOI 10.1234/correct", "profile": {"access_order": ["open_access"]}, "observation": "Saved file starts %PDF-, has four pages, but first page identifies DOI 10.1234/different"},
+    "expected": {"action": "mark_unverified", "status": "unverified"}
+  }
+]
